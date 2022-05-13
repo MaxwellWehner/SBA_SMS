@@ -23,7 +23,7 @@ public class Student {
 	@Column(nullable = false, length=50)
 	private String sPass;
 	
-	//Talked to kevin, he said a set was ok to use instaed of a list
+	//Talked to kevin, he said a set was ok to use instead of a list
 	@ManyToMany(targetEntity = Course.class, cascade=CascadeType.ALL)
 	private Set<Course> sCourses;
 

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.TypedQuery;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -21,21 +22,31 @@ public class StudentService implements StudentDAO {
 	public List<Student> getAllStudents() {
 		SessionFactory factory = new Configuration().configure().buildSessionFactory();
 		Session session = factory.openSession();
-		String hql = "FROM Student";
-		Query query = session.createQuery(hql);
-		List<Student> results = query.getResultList();
-		List<Student> res = results;
+		List<Student> res = null;
+		try {
+			String hql = "FROM Student";
+			Query query = session.createQuery(hql);
+			List<Student> results = query.getResultList();
+			res = results;
+		} catch (HibernateException ex) {
+			ex.printStackTrace();
+		}
 		session.close();
 		factory.close();
-		return results;
+		return res;
 	}
 
 	public Student getStudentByEmail(String sEmail) {
 		SessionFactory factory = new Configuration().configure().buildSessionFactory();
 		Session session = factory.openSession();
 		Transaction tx = session.beginTransaction();
-		Student s = session.load(Student.class, sEmail);
-		Student ans = new Student(s.getsEmail(), s.getsName(), s.getsPass(), s.getsCourses());
+		Student ans = null;
+		try {
+			Student s = session.load(Student.class, sEmail);
+			ans = new Student(s.getsEmail(), s.getsName(), s.getsPass(), s.getsCourses());
+		} catch (HibernateException ex) {
+			ex.printStackTrace();
+		}
 		session.close();
 		factory.close();
 		return ans;
@@ -44,11 +55,16 @@ public class StudentService implements StudentDAO {
 	public boolean validateStudent(String sEmail, String sPassword) {
 		SessionFactory factory = new Configuration().configure().buildSessionFactory();
 		Session session = factory.openSession();
-		String hql = "FROM Student s WHERE s.sEmail = :email AND s.sPass = :pass";
-		TypedQuery query = session.createQuery(hql);
-		query.setParameter("email", sEmail);
-		query.setParameter("pass", sPassword);
-		List<Student> result = query.getResultList();
+		List<Student> result = new ArrayList<Student>();
+		try {
+			String hql = "FROM Student s WHERE s.sEmail = :email AND s.sPass = :pass";
+			TypedQuery query = session.createQuery(hql);
+			query.setParameter("email", sEmail);
+			query.setParameter("pass", sPassword);
+			result = query.getResultList();
+		} catch (HibernateException ex) {
+			ex.printStackTrace();
+		}
 		session.close();
 		factory.close();
 		return result.size() > 0;
@@ -58,18 +74,34 @@ public class StudentService implements StudentDAO {
 		SessionFactory factory = new Configuration().configure().buildSessionFactory();
 		Session session = factory.openSession();
 		Transaction tx = session.beginTransaction();
-		Course c = session.load(Course.class, cId);
-		Student currStudent = session.load(Student.class, sEmail);
-		Set<Course> tempCourse = currStudent.getsCourses();
-		tempCourse.add(c);
-		Student newS = new Student();
-		newS.setsEmail(currStudent.getsEmail());
-		newS.setsName(currStudent.getsName());
-		newS.setsPass(currStudent.getsPass());
-		newS.setsCourses(tempCourse);
+		Course c = null;
+		try {
+			c = session.load(Course.class, cId);
+			System.out.println(c);
+		} catch (HibernateException ex) {
+			System.out.println("invalid course number");
+			session.close();
+			factory.close();
+			return;
+		}
+		try {
+			Student currStudent = session.load(Student.class, sEmail);
+			Set<Course> tempCourse = currStudent.getsCourses();
+			if (tempCourse.contains(c)) {
+				System.out.println("You are already registered in that course!");
+			}
+			tempCourse.add(c);
+			Student newS = new Student();
+			newS.setsEmail(currStudent.getsEmail());
+			newS.setsName(currStudent.getsName());
+			newS.setsPass(currStudent.getsPass());
+			newS.setsCourses(tempCourse);
 
-		session.merge(newS);
-		session.getTransaction().commit();
+			session.merge(newS);
+			session.getTransaction().commit();
+		} catch (HibernateException ex) {
+			ex.printStackTrace();
+		}
 		session.close();
 		factory.close();
 	}
@@ -78,9 +110,13 @@ public class StudentService implements StudentDAO {
 		SessionFactory factory = new Configuration().configure().buildSessionFactory();
 		Session session = factory.openSession();
 		Transaction tx = session.beginTransaction();
-		Student s = session.load(Student.class, sEmail);
 		List<Course> lc = new ArrayList<Course>();
-		lc.addAll(s.getsCourses());
+		try {
+			Student s = session.load(Student.class, sEmail);
+			lc.addAll(s.getsCourses());
+		} catch (HibernateException ex) {
+			ex.printStackTrace();
+		}
 		return lc;
 	}
 
