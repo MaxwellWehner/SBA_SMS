@@ -2,6 +2,7 @@ package jpa.entitymodels;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -23,8 +24,8 @@ public class Student {
 	private String sPass;
 	
 	//Talked to kevin, he said a set was ok to use instaed of a list
-	@ManyToMany(targetEntity = Course.class)
-	private Set sCourses;
+	@ManyToMany(targetEntity = Course.class, cascade=CascadeType.ALL)
+	private Set<Course> sCourses;
 
 	public Student() {
 		super();
@@ -36,7 +37,7 @@ public class Student {
 		this.sPass = password;
 	}
 
-	public Student(String email, String name, String password, Set sCourses) {
+	public Student(String email, String name, String password, Set<Course> sCourses) {
 		this.sEmail = email;
 		this.sName = name;
 		this.sPass = password;
@@ -67,12 +68,18 @@ public class Student {
 		this.sPass = sPass;
 	}
 
-	public Set getsCourses() {
+	public Set<Course> getsCourses() {
 		return sCourses;
 	}
 
-	public void setsCourses(Set sCourses) {
+	public void setsCourses(Set<Course> sCourses) {
 		this.sCourses = sCourses;
 	}
 
+	@Override
+	public String toString() {
+		return "Student [sEmail=" + sEmail + ", sName=" + sName + ", sPass=" + sPass + "]";
+	}
+	
+	
 }

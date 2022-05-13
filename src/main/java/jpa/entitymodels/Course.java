@@ -54,4 +54,9 @@ public class Course {
 		this.cInstructorName = cInstructorName;
 	}
 
+	@Override
+	public String toString() {
+		return "Course [cId=" + cId + ", cName=" + cName + ", cInstructorName=" + cInstructorName + "]";
+	}
+	
 }
