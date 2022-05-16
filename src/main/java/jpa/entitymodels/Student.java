@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+//Student model for table using hibernate
 @Entity
 @Table(name = "Student")
 public class Student {

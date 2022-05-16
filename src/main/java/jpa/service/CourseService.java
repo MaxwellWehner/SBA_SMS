@@ -11,6 +11,7 @@ import jpa.dao.CourseDAO;
 import jpa.entitymodels.Course;
 
 public class CourseService implements CourseDAO{
+	//gets all the courses 
 	public List<Course> getAllCourses() {
 		SessionFactory factory = new Configuration().configure().buildSessionFactory();
 		Session session = factory.openSession();

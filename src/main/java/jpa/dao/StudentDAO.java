@@ -5,6 +5,8 @@ import java.util.List;
 import jpa.entitymodels.Course;
 import jpa.entitymodels.Student;
 
+
+//Student DAO interface for implmentation in StudentService
 public interface StudentDAO {
 	public List<Student> getAllStudents();
 

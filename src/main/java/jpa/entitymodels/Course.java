@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+
+//course entity for db using hibernate
 @Entity
 @Table(name = "Course")
 public class Course {
